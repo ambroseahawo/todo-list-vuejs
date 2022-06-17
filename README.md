@@ -1,5 +1,10 @@
 # todo-list-vuejs
 
+## Hosted Live Demo on Netlify
+```
+Still under construction
+```
+
 ## Project setup
 ```
 npm install
