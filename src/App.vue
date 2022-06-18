@@ -35,73 +35,49 @@ export default {
   },
   // method declarations should be procedural, don't call before declaring above
   methods: {
-    async addTodo (todo) {
-      const res = await fetch('api/todos', {
-        method: 'POST',
-        headers: {
-          'Content-type': 'application/json'
-        },
-        body: JSON.stringify(todo)
-      })
-
-      const data = await res.json()
-      this.todos = [...this.todos, data]
+    addTodo (todo) {
+      const newTodoTitle = todo.title
+      const existingTodo = this.todos.filter((todo) => todo.title === newTodoTitle)
+      if (existingTodo.length === 0) {
+        this.todos = [todo, ...this.todos]
+      } else {
+        alert(`Todo (${newTodoTitle}) already exists!`)
+      }
     },
-    async fetchTodos () {
-      const res = await fetch('api/todos')
-      const data = await res.json()
-      console.log(Object.keys(data))
-      return data
-    },
-    async fetchTodo (id) {
-      const res = await fetch(`api/todos/${id}`)
-      const data = await res.json()
-      return data
-    },
-    async toggleCompleted (id) {
+    toggleCompleted (id) {
       // this.isCompleted = !this.isCompleted
-      const todoToToggle = await this.fetchTodo(id)
+      const todoToToggle = this.todos.filter((todo) => todo.id === id)[0]
       const updatedTodo = { ...todoToToggle, completed: !todoToToggle.completed }
 
-      const res = await fetch(`api/todos/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-type': 'application/json'
-        },
-        body: JSON.stringify(updatedTodo)
-      })
-
-      const data = await res.json()
-
       this.todos = this.todos.map((todo) =>
-        todo.id === id ? { ...todo, completed: data.completed } : todo
+        todo.id === id ? { ...todo, completed: updatedTodo.completed } : todo
       )
     },
-    async deleteTodo (id) {
-      const res = await fetch(`api/todos/${id}`, {
-        method: 'DELETE'
-      })
-
-      res.status === 200
-        ? (
-            this.tasks = this.todos = this.todos.filter((todo) => todo.id !== id)
-          )
-        : alert(
-          'Error deleting todo, please try again'
-        )
-    },
-    async searchTodo (searchText) {
-      const res = await fetch(`api/todos?q=${searchText}`)
-      const data = await res.json()
-      this.todos = data
+    deleteTodo (id) {
+      this.todos = this.todos.filter((todo) => todo.id !== id)
     },
     deleteAllTodos () {
-      const todosKeysArray = this.todos.map((todo) => todo.id)
-      todosKeysArray.forEach((key) => this.deleteTodo(key))
+      if (confirm('Are you sure')) this.todos = []
+    },
+    searchTodo (searchText) {
+      if (!searchText) alert('Enter text to search')
+      const result = this.todos.filter((todo) => todo.title.toLowerCase().includes(searchText.toLowerCase()))
+
+      if (result.length > 0) {
+        this.todos = result
+      } else {
+        alert(`${searchText} not found in your todo list`)
+      }
     }
   },
   async created () {
-    this.todos = await this.fetchTodos()
+    this.todos = [
+      {
+        id: 1,
+        title: 'Placeholder',
+        completed: false
+      }
+    ]
   },
   components: {
     SearchTodo,

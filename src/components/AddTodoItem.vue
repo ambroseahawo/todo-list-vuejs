@@ -28,17 +28,24 @@ export default {
     onSubmit (e) {
       e.preventDefault()
 
+      console.log(this.title.length)
+
       if (!this.title) {
         alert('Please add a task')
         return false
       } else {
-        const newTodo = {
-          title: this.title.toLowerCase(),
-          completed: false
-        }
-        this.addTodo(newTodo)
+        if (this.title.length <= 20) {
+          const newTodo = {
+            id: Math.floor(Math.random() * 100000),
+            title: this.title.toLowerCase(),
+            completed: false
+          }
+          this.addTodo(newTodo)
 
-        this.title = ''
+          this.title = ''
+        } else {
+          alert('Todo title should not exceed 20 characters')
+        }
       }
     }
   }
