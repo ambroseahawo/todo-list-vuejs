@@ -1,9 +1,7 @@
 # todo-list-vuejs
 
 ## Hosted Live Demo on Netlify
-```
-Still under construction
-```
+[Live Demo - https://todolist-vuejs-demo.netlify.app](https://todolist-vuejs-demo.netlify.app/)
 
 ## Project setup
 ```
