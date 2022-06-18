@@ -3,17 +3,32 @@
     {
       "id": 1,
       "title": "Learn Vuejs",
-      "completed": true
+      "completed": false
     },
     {
       "id": 2,
       "title": "Learn Vuexs",
-      "completed": false
+      "completed": true
     },
     {
       "id": 3,
       "title": "Learn API Calls",
       "completed": false
+    },
+    {
+      "title": "new todo",
+      "completed": true,
+      "id": 4
+    },
+    {
+      "title": "Basic Todo",
+      "completed": true,
+      "id": 5
+    },
+    {
+      "title": "Custom Todo",
+      "completed": false,
+      "id": 6
     }
   ]
 }

@@ -9,17 +9,16 @@
           <div class="card-body">
             <!-- search component -->
             <SearchTodo />
-            <ul class="list-group mb-3">
-              <!-- todo item component -->
-              <TodoItem
-                :toggleCompleted="toggleCompleted"
-                :isCompleted="isCompleted"
-              />
-            </ul>
+            <TodosList
+              :todos="todos"
+              :toggleCompleted="toggleCompleted"
+              :isCompleted="isCompleted"
+              :deleteTodo="deleteTodo"
+            />
             <button id="clearBtn" type="button" class="btn btn-dark btn-sm">Clear All</button>
           </div>
           <!-- add todo item component -->
-          <AddTodoItem />
+          <AddTodoItem :addTodo="addTodo" />
         </div>
       </div>
     </div>
@@ -28,8 +27,8 @@
 
 <script>
 import SearchTodo from '@/components/SearchTodo.vue'
-import TodoItem from '@/components/TodoItem.vue'
 import AddTodoItem from '@/components/AddTodoItem.vue'
+import TodosList from '@/components/TodosList.vue'
 
 export default {
   data () {
@@ -38,14 +37,61 @@ export default {
       todos: []
     }
   },
+  // method declarations should be procedural, don't call before declaring above
   methods: {
+    async addTodo (todo) {
+      const res = await fetch('api/todos', {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json'
+        },
+        body: JSON.stringify(todo)
+      })
+
+      const data = await res.json()
+      this.todos = [...this.todos, data]
+    },
     async fetchTodos () {
       const res = await fetch('api/todos')
       const data = await res.json()
       return data
     },
-    toggleCompleted () {
-      this.isCompleted = !this.isCompleted
+    async fetchTodo (id) {
+      const res = await fetch(`api/todos/${id}`)
+      const data = await res.json()
+      return data
+    },
+    async toggleCompleted (id) {
+      // this.isCompleted = !this.isCompleted
+      const todoToToggle = await this.fetchTodo(id)
+      const updatedTodo = { ...todoToToggle, completed: !todoToToggle.completed }
+
+      const res = await fetch(`api/todos/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-type': 'application/json'
+        },
+        body: JSON.stringify(updatedTodo)
+      })
+
+      const data = await res.json()
+
+      this.todos = this.todos.map((todo) =>
+        todo.id === id ? { ...todo, completed: data.completed } : todo
+      )
+    },
+    async deleteTodo (id) {
+      const res = await fetch(`api/todos/${id}`, {
+        method: 'DELETE'
+      })
+
+      res.status === 200
+        ? (
+            this.tasks = this.todos = this.todos.filter((todo) => todo.id !== id)
+          )
+        : alert(
+          'Error deleting todo, please try again'
+        )
     }
   },
   async created () {
@@ -53,11 +99,8 @@ export default {
   },
   components: {
     SearchTodo,
-    TodoItem,
+    TodosList,
     AddTodoItem
   }
 }
 </script>
-
-<style>
-</style>
