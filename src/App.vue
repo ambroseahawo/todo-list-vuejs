@@ -8,14 +8,10 @@
           </h5>
           <div class="card-body">
             <!-- search component -->
-            <SearchTodo />
-            <TodosList
-              :todos="todos"
-              :toggleCompleted="toggleCompleted"
-              :isCompleted="isCompleted"
-              :deleteTodo="deleteTodo"
-            />
-            <button id="clearBtn" type="button" class="btn btn-dark btn-sm">Clear All</button>
+            <SearchTodo :searchTodo="searchTodo" />
+            <TodosList :todos="todos" :toggleCompleted="toggleCompleted" :isCompleted="isCompleted"
+              :deleteTodo="deleteTodo" />
+            <button @click="deleteAllTodos" id="clearBtn" type="button" class="btn btn-dark btn-sm">Clear All</button>
           </div>
           <!-- add todo item component -->
           <AddTodoItem :addTodo="addTodo" />
@@ -54,6 +50,7 @@ export default {
     async fetchTodos () {
       const res = await fetch('api/todos')
       const data = await res.json()
+      console.log(Object.keys(data))
       return data
     },
     async fetchTodo (id) {
@@ -92,6 +89,15 @@ export default {
         : alert(
           'Error deleting todo, please try again'
         )
+    },
+    async searchTodo (searchText) {
+      const res = await fetch(`api/todos?q=${searchText}`)
+      const data = await res.json()
+      this.todos = data
+    },
+    deleteAllTodos () {
+      const todosKeysArray = this.todos.map((todo) => todo.id)
+      todosKeysArray.forEach((key) => this.deleteTodo(key))
     }
   },
   async created () {

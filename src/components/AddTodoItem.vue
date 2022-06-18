@@ -33,7 +33,7 @@ export default {
         return false
       } else {
         const newTodo = {
-          title: this.title.toUpperCase(),
+          title: this.title.toLowerCase(),
           completed: false
         }
         this.addTodo(newTodo)
